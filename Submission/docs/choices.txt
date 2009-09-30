@@ -1,0 +1,28 @@
+suncertify.db package:
+Data <-- This is a facade which delegates to FileData to allow for a future change to a different data store
+FileData <-- This uses both a read/write database object as well as containing the searching functionality from seperate
+classes
+
+suncertify.db.file package:
+* meta package <-- You should not have meta data and data together, so the reading of the header information is in a
+seperate class.  As the delete information is missing from the schema, it is stored here instead along with an object
+to represent the id,delete status and data.
+* reader package <-- this should be used as a singleton and fully syncronized, locking/caching is a seperate concern so
+is implemented elsewhere.
+
+FileDatabaseDecorator <--  Keeping the cache/locking/access seperate these decorators provide the functionality
+independently.
+
+LockingDecorator <-- Syncronization happens in the same order to avoid deadlocks, unlocking on a deleted record is allowed.
+Using java.util.Random with nanoseconds as seed, tested to be adequate for millions of ids.
+
+suncertify.lang package:
+
+Utility code should live on it's own rather than being bundled with classes which are supposed to achieve other
+functions.
+
+StringUtils.padRight <-- String.format only pads left
+CollectionToArray.convert <-- Creates a lot of noise in code converting to primitives
+Filter <-- It's likely that the user will request differences to the searching mechanism.  To support this a simple
+           interface is available
+
